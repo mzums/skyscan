@@ -2,6 +2,7 @@ import argparse
 import requests
 from time import strftime
 from prettytable import PrettyTable
+from colorama import Fore, Back, Style, init
 from key import APIkey
 
 
@@ -10,6 +11,7 @@ class WeatherApp:
         self.args = self.parse_args()
         self.api_key = APIkey
         self.api_url = 'http://api.openweathermap.org/data/2.5/'
+        init(autoreset=True)
 
     def parse_args(self):
         parser = argparse.ArgumentParser(description='Weather program')
@@ -22,7 +24,12 @@ class WeatherApp:
 
     def run(self):
         if not any(vars(self.args).values()):
-            print("Welcome to SkyScan!")
+            print(Fore.RED + '''
+Yb        dP 888888 88      dP""b8  dP"Yb  8b    d8 888888   888888  dP"Yb    .dP"Y8 88  dP Yb  dP .dP"Y8  dP""b8    db    88b 88 d8b
+ Yb  db  dP  88__   88     dP   `" dP   Yb 88b  d88 88__       88   dP   Yb   `Ybo." 88odP   YbdP  `Ybo." dP   `"   dPYb   88Yb88 Y8P
+  YbdPYbdP   88""   88  .o Yb      Yb   dP 88YbdP88 88""       88   Yb   dP   o.`Y8b 88"Yb    8P   o.`Y8b Yb       dP__Yb  88 Y88 `"'
+   YP  YP    888888 88ood8  YboodP  YbodP  88 YY 88 888888     88    YbodP    8bodP' 88  Yb  dP    8bodP'  YboodP dP""""Yb 88  Y8 (8)
+''')
             return
         if self.args.city is None:
             print("Please specify a city using the '-c' flag.")
@@ -84,19 +91,28 @@ class WeatherApp:
 
         for i in range(d):
             s = data['list'][i*d]['dt_txt']
-            print(s)
+            print(Fore.RED + s)
             table = PrettyTable(header)
+            table.horizontal_char = "\033[94m─\033[0m"
+            table.vertical_char = "\033[94m│\033[0m"
+            table.junction_char = "\033[94m┼\033[0m"
             row = []
+
             for j in range(8):
                 temp = data['list'][i*d+j]['main']['temp']
-                row.append(self.get_temp(temp))
+                temp = str(self.get_temp(temp))
+                row.append(temp)
             table.add_row(['Temperature']+row)
             row = []
+
             for j in range(8):
                 description = data['list'][i*d+j]['weather'][0]['description']
-                row.append(description)
+                spaces1 = int((16-int(len(description))+1)/2) * ' '
+                spaces2 = int((16-int(len(description)))/2) * ' '
+                row.append(spaces1 + description + spaces2)
             table.add_row(['Description']+row)
             row = []
+
             for j in range(8):
                 pressure = f"{data['list'][i*d+j]['main']['pressure']} mbar"
                 row.append(pressure)
