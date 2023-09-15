@@ -3,7 +3,7 @@ import requests
 from time import strftime
 from prettytable import PrettyTable
 from colorama import Fore, Back, Style, init
-from key import APIkey
+from terminal.key import APIkey
 
 
 class WeatherApp:
