@@ -21,3 +21,10 @@ html {
         border-radius: 15px;
         margin-bottom: 20px;
 }
+#row {
+        display: flex;
+        flex-direction: row;
+}
+#output {
+        margin-top: 50px;
+}
